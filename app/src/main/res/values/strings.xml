@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">NALS Demo</string>
+    <string name="today">Today</string>
+    <string name="an_error_occurred">An error occurred!</string>
+    <string name="no_data">No Data</string>
+    <string name="number_temperature">%1$.1f°</string>
+    <string name="c">C</string>
+    <string name="percent">%</string>
+    <string name="humidity">Humidity</string>
+    <string name="predictability">Predictability</string>
+</resources>
