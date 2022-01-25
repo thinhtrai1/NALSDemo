@@ -22,6 +22,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
+import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.abs
 
@@ -128,7 +129,7 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(R.layout.activity_home) {
             tvHumidity.setAnimateText(data.humidity)
             tvPredictability.setAnimateText(data.predictability)
             tvTemperature.setAnimateText(data.theTemp) {
-                getString(R.string.number_temperature, it)
+                getString(R.string.number_temperature, DecimalFormat("#.#").format(it))
             }
             Picasso.get().load(getFullImageUrl(data.weatherStateAbbr)).into(imvWeather, object : Callback {
                 override fun onSuccess() {
