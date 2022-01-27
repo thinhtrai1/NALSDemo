@@ -2,6 +2,7 @@ package com.nals.demo.application
 
 import android.app.Application
 import androidx.room.Room
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.nals.demo.BuildConfig
 import com.nals.demo.util.ApiService
 import com.nals.demo.util.Constant
@@ -24,6 +25,7 @@ class DemoApplicationModule {
     fun provideApiClient(): ApiService {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.BASE_URL + "api/")
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(
                 OkHttpClient.Builder()

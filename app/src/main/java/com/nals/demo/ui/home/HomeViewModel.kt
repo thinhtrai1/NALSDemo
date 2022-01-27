@@ -1,15 +1,13 @@
 package com.nals.demo.ui.home
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import com.nals.demo.base.BaseViewModel
 import com.nals.demo.data.home.entities.Weather
 import com.nals.demo.data.home.repository.HomeRepository
 import com.nals.demo.util.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,11 +15,9 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     val weather: MutableLiveData<Weather> = MutableLiveData()
 
     fun getWeather(id: String, year: String, month: String, day: String) {
-        viewModelScope.launch {
-            loading.value = true
-            when (val result = withContext(Dispatchers.IO) {
-                homeRepository.getWeather(id, year, month, day)
-            }) {
+        loading.value = true
+        homeRepository.getWeather(id, year, month, day).subscribe { result ->
+            when (result) {
                 is ApiResult.Success -> {
                     weather.value = result.data
                 }
@@ -30,17 +26,14 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
                 }
             }
             loading.value = false
-        }
+        }.addTo(compositeDisposable)
     }
 
     fun getWeather(date: String) {
-        viewModelScope.launch {
-            val result = homeRepository.getWeather(date)
-            if (result != null) {
-                weather.value = result
-            } else {
-                error.value = ApiResult.ErrorType.EMPTY
-            }
-        }
+        homeRepository.getWeather(date).subscribe({ result ->
+            weather.value = result
+        }, {
+            error.value = ApiResult.ErrorType.EMPTY
+        }).addTo(compositeDisposable)
     }
 }
