@@ -10,7 +10,9 @@ class HomeRepositoryImp(
     private val remoteDataSource: HomeRemoteDataSource
 ) : HomeRepository {
     override suspend fun getWeather(id: String, year: String, month: String, day: String): ApiResult<Weather> {
-        when (val result = remoteDataSource.getWeathers(id, year, month, day)) {
+        when (val result = ApiResult.getResult {
+            remoteDataSource.getWeathers(id, year, month, day)
+        }) {
             is ApiResult.Success -> {
                 result.data.maxByOrNull { it.weatherStateAbbr }?.let { weather ->
                     weather.humidity = result.data.map { it.humidity }.average().toInt()

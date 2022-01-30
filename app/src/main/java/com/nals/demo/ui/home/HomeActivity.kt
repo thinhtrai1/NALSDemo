@@ -15,6 +15,7 @@ import com.nals.demo.data.home.entities.Weather
 import com.nals.demo.databinding.ActivityHomeBinding
 import com.nals.demo.model.WeatherDay
 import com.nals.demo.util.ApiResult
+import com.nals.demo.util.CustomTouch
 import com.nals.demo.util.extension.getFullImageUrl
 import com.nals.demo.util.extension.isNetworkConnection
 import com.nals.demo.util.extension.screenWidth
@@ -50,6 +51,8 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(R.layout.activity_home) {
             WeatherDay(it, firstCalendar.timeInMillis, dayName)
         }
         with(mBinding) {
+            imvWeather.setOnTouchListener(CustomTouch().withSwipeLayout(swipeRefreshLayout))
+
             swipeRefreshLayout.setOnRefreshListener {
                 swipeRefreshLayout.isRefreshing = false
                 getData(weatherDays[pagerAdapter.currentSelected])
@@ -159,13 +162,14 @@ class HomeActivity : BaseActivity<ActivityHomeBinding>(R.layout.activity_home) {
     }
 
     private fun randomAnimateCloud() {
-        val initialX = screenWidth / 2f - resources.getDimensionPixelSize(R.dimen.home_weather_icon) / 2
-        val targetX = random.nextInt(screenWidth).toFloat()
+        val initialX = random.nextInt(screenWidth / 2).toFloat()
+        val targetX = screenWidth - initialX - mBinding.imvWeather.width
         weatherIconAnim = ObjectAnimator.ofFloat(mBinding.imvWeather, "x", initialX, targetX).apply {
             interpolator = LinearInterpolator()
             repeatMode = ObjectAnimator.REVERSE
             repeatCount = ObjectAnimator.INFINITE
-            duration = (abs(targetX - initialX) * 100).toLong()
+            duration = (abs(targetX) * 100).toLong()
+            setCurrentFraction(0.5f)
             start()
         }
     }
